@@ -53,7 +53,7 @@ In a formal DFS model, services are categorized into two primary abstractions:
 
 \subsection*{server.py}
 
-\subsubsection*{Source Code}
+\subsubsection*{Source Code (minted)}
 \begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import os
@@ -175,7 +175,17 @@ if __name__ == "__main__":
     start_server()
 \end{minted}
 
-\subsubsection*{Output}
+\subsubsection*{Output (minted)}
+\begin{minted}[frame=lines,breaklines,fontsize=\footnotesize]{text}
+==========================================
+ Distributed File System (DFS) Server
+ Running on 127.0.0.1:5000
+ Storage Path: e:\Lab Reports\Distributed-System-Lab\LAB-3-dfs\server_storage
+==========================================
+Waiting for client connections...
+\end{minted}
+
+\subsubsection*{Output (listing)}
 \begin{lstlisting}[frame=single, title=server.py Output]
 ==========================================
  Distributed File System (DFS) Server
@@ -187,7 +197,7 @@ Waiting for client connections...
 
 \subsection*{client.py}
 
-\subsubsection*{Source Code}
+\subsubsection*{Source Code (minted)}
 \begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import json
@@ -316,7 +326,115 @@ if __name__ == "__main__":
     main()
 \end{minted}
 
-\subsubsection*{Output}
+\subsubsection*{Output (minted)}
+\begin{minted}[frame=lines,breaklines,fontsize=\footnotesize]{text}
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT   
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 1
+Enter filename to create (e.g., test.txt): test.txt
+Enter initial file content (optional): echo "Hello!"
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' created successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 2
+Enter filename to read: test.txt
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' read successfully.
+------------------------------------------
+FILE CONTENT:
+echo "Hello!"
+------------------------------------------
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 3
+Enter filename to write/update: test.txt
+Enter content to write: ok
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' written successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 5
+
+[Server Status] : SUCCESS
+[Server Message]: Files listed successfully.
+------------------------------------------
+FILES ON DFS SERVER:
+  1. himal.txt
+  2. test.txt
+------------------------------------------
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 4
+Enter filename to delete: test.txt
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' deleted successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 6
+
+[+] Exiting DFS Client. Goodbye!
+(venv) PS E:\Lab Reports\Distributed-System-Lab> 
+\end{minted}
+
+\subsubsection*{Output (listing)}
 \begin{lstlisting}[frame=single, title=client.py Output]
 ==========================================
     DISTRIBUTED FILE SYSTEM (DFS) CLIENT   
@@ -426,7 +544,7 @@ Enter option (1-6): 6
 
 \subsection*{test.py (test\_dfs.py)}
 
-\subsubsection*{Source Code}
+\subsubsection*{Source Code (minted)}
 \begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import os
 import sys
@@ -482,7 +600,23 @@ if __name__ == "__main__":
     unittest.main()
 \end{minted}
 
-\subsubsection*{Output}
+\subsubsection*{Output (minted)}
+\begin{minted}[frame=lines,breaklines,fontsize=\footnotesize]{text}
+==========================================
+ Distributed File System (DFS) Server
+ Running on 127.0.0.1:5000
+ Storage Path: e:\Lab Reports\Distributed-System-Lab\LAB-3-dfs\server_storage
+==========================================
+Waiting for client connections...
+
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.524s
+
+OK
+\end{minted}
+
+\subsubsection*{Output (listing)}
 \begin{lstlisting}[frame=single, title=test_dfs.py Output]
 ==========================================
  Distributed File System (DFS) Server
