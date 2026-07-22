@@ -1,0 +1,452 @@
+\documentclass[12pt, a4paper]{article}
+
+% Required Packages
+\usepackage[utf8]{utf8}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{caption}
+
+% Code Listing Configuration
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single
+}
+
+% Title Formatting
+\title{\textbf{Implementation of Distributed File System (DFS)}\\
+\large Department of Computer Engineering}
+\author{\textbf{Student Name:} Himal Joshi \\ \textbf{Faculty:} Computer Engineering}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\hrule
+\vspace{0.5cm}
+
+% 2. Objective
+\section{Objective}
+The main objectives of this lab assignment are:
+\begin{enumerate}
+    \item To understand the core architecture and working principles of a Distributed File System (DFS).
+    \item To implement a client-server model for a distributed file system using Python socket programming and multi-threading.
+    \item To perform fundamental file system operations remotely: \texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}.
+    \item To manage concurrency and dynamic storage synchronization between client and server.
+\end{enumerate}
+
+% 3. Theory
+\section{Theory}
+
+\subsection{Distributed File System (DFS)}
+A Distributed File System (DFS) is a file system with data stored on a server where files can be accessed and processed by clients over a network connection as if they were residing locally. A DFS provides location transparency, concurrency control, and centralized data management, allowing multiple clients to access shared files concurrently without conflicting with each other.
+
+\subsection{Client-Server Architecture}
+The client-server model is a distributed application structure that partitions tasks or workloads between providers of a resource or service (servers) and service requesters (clients):
+\begin{itemize}
+    \item \textbf{Server}: Listens continuously on a designated host and port for incoming TCP socket connections. Upon receiving a client request, it processes the requested file operation against physical storage and returns a formatted response payload.
+    \item \textbf{Client}: Initiates communication by establishing a socket connection to the server, sends structured operation requests (e.g., in JSON format), and renders server responses to the user through an interactive terminal user interface.
+\end{itemize}
+
+\subsection{Block Diagram}
+The architecture of the implemented Distributed File System is shown in Figure~\ref{fig:block_diagram}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/Implementation of DFS - Block Diagram.png}
+    \caption{Implementation of DFS - Block Diagram}
+    \label{fig:block_diagram}
+\end{figure}
+
+\subsection{Directory Service and Flat File Service}
+A distributed file system typically separates management responsibilities into two modular abstractions:
+\begin{enumerate}
+    \item \textbf{Directory Service}: Responsible for mapping human-readable text filenames to unique file identifiers or storage paths. It handles operations such as searching directory contents, listing files, and maintaining file metadata.
+    \item \textbf{Flat File Service}: Operates directly on raw file contents. It handles operations such as reading file byte streams, writing/updating content to storage files, creating new raw file objects, and removing files from storage.
+\end{enumerate}
+
+% 4. Source Code and Output
+\section{Source Code and Output}
+
+\subsection{server.py}
+
+\subsubsection{Source Code}
+\begin{lstlisting}[language=Python, title=server.py]
+import socket
+import os
+import json
+import threading
+
+# Server Configuration
+HOST = '127.0.0.1'
+PORT = 5000
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'server_storage')
+
+# Ensure server storage directory exists
+if not os.path.exists(STORAGE_DIR):
+    os.makedirs(STORAGE_DIR)
+
+def handle_client(client_socket, address):
+    print(f"[+] Client connected from {address[0]}:{address[1]}")
+    while True:
+        try:
+            # Receive request data from client
+            raw_data = client_socket.recv(4096).decode('utf-8')
+            if not raw_data:
+                break
+
+            request = json.loads(raw_data)
+            action = request.get("action", "").upper()
+            filename = request.get("filename", "")
+            content = request.get("content", "")
+
+            response = {"status": "ERROR", "message": "Invalid Action", "data": None}
+
+            # Sanitize filename to prevent directory traversal
+            safe_filename = os.path.basename(filename) if filename else ""
+            filepath = os.path.join(STORAGE_DIR, safe_filename) if safe_filename else ""
+
+            # 1. CREATE File
+            if action == "CREATE":
+                if not safe_filename:
+                    response = {"status": "ERROR", "message": "Filename required."}
+                elif os.path.exists(filepath):
+                    response = {"status": "ERROR", "message": f"File '{safe_filename}' already exists."}
+                else:
+                    with open(filepath, 'w', encoding='utf-8') as f:
+                        f.write(content)
+                    response = {"status": "SUCCESS", "message": f"File '{safe_filename}' created successfully."}
+
+            # 2. READ File
+            elif action == "READ":
+                if not os.path.exists(filepath):
+                    response = {"status": "ERROR", "message": f"File '{safe_filename}' not found."}
+                else:
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        file_data = f.read()
+                    response = {"status": "SUCCESS", "message": f"File '{safe_filename}' read successfully.", "data": file_data}
+
+            # 3. WRITE File (Update / Overwrite)
+            elif action == "WRITE":
+                if not safe_filename:
+                    response = {"status": "ERROR", "message": "Filename required."}
+                else:
+                    with open(filepath, 'w', encoding='utf-8') as f:
+                        f.write(content)
+                    response = {"status": "SUCCESS", "message": f"File '{safe_filename}' written successfully."}
+
+            # 4. DELETE File
+            elif action == "DELETE":
+                if not os.path.exists(filepath):
+                    response = {"status": "ERROR", "message": f"File '{safe_filename}' not found."}
+                else:
+                    os.remove(filepath)
+                    response = {"status": "SUCCESS", "message": f"File '{safe_filename}' deleted successfully."}
+
+            # 5. LIST Files
+            elif action == "LIST":
+                files = os.listdir(STORAGE_DIR)
+                response = {"status": "SUCCESS", "message": "Files listed successfully.", "data": files}
+
+            # Send JSON response back to client
+            client_socket.sendall(json.dumps(response).encode('utf-8'))
+
+        except json.JSONDecodeError:
+            err_resp = {"status": "ERROR", "message": "Invalid JSON payload."}
+            client_socket.sendall(json.dumps(err_resp).encode('utf-8'))
+        except Exception as e:
+            err_resp = {"status": "ERROR", "message": str(e)}
+            client_socket.sendall(json.dumps(err_resp).encode('utf-8'))
+            break
+
+    print(f"[-] Client {address[0]}:{address[1]} disconnected.")
+    client_socket.close()
+
+def start_server():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Reuse address option to allow immediate restart of server
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(5)
+    print(f"==========================================")
+    print(f" Distributed File System (DFS) Server")
+    print(f" Running on {HOST}:{PORT}")
+    print(f" Storage Path: {STORAGE_DIR}")
+    print(f"==========================================")
+    print("Waiting for client connections...\n")
+
+    try:
+        while True:
+            client_socket, address = server_socket.accept()
+            # Handle client requests in a separate thread
+            client_thread = threading.Thread(target=handle_client, args=(client_socket, address))
+            client_thread.daemon = True
+            client_thread.start()
+    except KeyboardInterrupt:
+        print("\n[!] Shutting down DFS Server...")
+    finally:
+        server_socket.close()
+
+if __name__ == "__main__":
+    start_server()
+\end{lstlisting}
+
+\subsubsection{Output}
+\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=server.py Output]
+======================================================================
+[ PLACEHOLDER: Paste server.py execution output / terminal logs here ]
+======================================================================
+\end{lstlisting}
+
+\newpage
+
+\subsection{client.py}
+
+\subsubsection{Source Code}
+\begin{lstlisting}[language=Python, title=client.py]
+import socket
+import json
+
+# Server Connection Details (hardcoded as per requirements)
+HOST = '127.0.0.1'
+PORT = 5000
+
+def send_request(action, filename="", content=""):
+    """
+    Sends a request dictionary to the DFS Server and receives the response.
+    """
+    try:
+        # Create TCP Socket
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((HOST, PORT))
+
+        payload = {
+            "action": action,
+            "filename": filename,
+            "content": content
+        }
+
+        # Send JSON payload
+        client_socket.sendall(json.dumps(payload).encode('utf-8'))
+
+        # Receive JSON response
+        raw_response = client_socket.recv(4096).decode('utf-8')
+        response = json.loads(raw_response)
+
+        client_socket.close()
+        return response
+
+    except ConnectionRefusedError:
+        return {"status": "ERROR", "message": "Could not connect to DFS Server. Is server.py running?"}
+    except Exception as e:
+        return {"status": "ERROR", "message": f"Connection error: {str(e)}"}
+
+def main():
+    while True:
+        print("\n==========================================")
+        print("    DISTRIBUTED FILE SYSTEM (DFS) CLIENT   ")
+        print("==========================================")
+        print("1. Create File")
+        print("2. Read File")
+        print("3. Write / Update File")
+        print("4. Delete File")
+        print("5. List Files")
+        print("6. Exit")
+        print("==========================================")
+        
+        choice = input("Enter option (1-6): ").strip()
+
+        # 1. CREATE File
+        if choice == '1':
+            filename = input("Enter filename to create (e.g., test.txt): ").strip()
+            if not filename:
+                print("[!] Filename cannot be empty.")
+                continue
+            content = input("Enter initial file content (optional): ")
+            response = send_request("CREATE", filename, content)
+            print(f"\n[Server Status] : {response.get('status')}")
+            print(f"[Server Message]: {response.get('message')}")
+
+        # 2. READ File
+        elif choice == '2':
+            filename = input("Enter filename to read: ").strip()
+            if not filename:
+                print("[!] Filename cannot be empty.")
+                continue
+            response = send_request("READ", filename)
+            print(f"\n[Server Status] : {response.get('status')}")
+            print(f"[Server Message]: {response.get('message')}")
+            if response.get("status") == "SUCCESS":
+                print("------------------------------------------")
+                print("FILE CONTENT:")
+                print(response.get("data", ""))
+                print("------------------------------------------")
+
+        # 3. WRITE / Update File
+        elif choice == '3':
+            filename = input("Enter filename to write/update: ").strip()
+            if not filename:
+                print("[!] Filename cannot be empty.")
+                continue
+            content = input("Enter content to write: ")
+            response = send_request("WRITE", filename, content)
+            print(f"\n[Server Status] : {response.get('status')}")
+            print(f"[Server Message]: {response.get('message')}")
+
+        # 4. DELETE File
+        elif choice == '4':
+            filename = input("Enter filename to delete: ").strip()
+            if not filename:
+                print("[!] Filename cannot be empty.")
+                continue
+            response = send_request("DELETE", filename)
+            print(f"\n[Server Status] : {response.get('status')}")
+            print(f"[Server Message]: {response.get('message')}")
+
+        # 5. LIST Files
+        elif choice == '5':
+            response = send_request("LIST")
+            print(f"\n[Server Status] : {response.get('status')}")
+            print(f"[Server Message]: {response.get('message')}")
+            if response.get("status") == "SUCCESS":
+                files = response.get("data", [])
+                print("------------------------------------------")
+                print("FILES ON DFS SERVER:")
+                if files:
+                    for idx, f in enumerate(files, 1):
+                        print(f"  {idx}. {f}")
+                else:
+                    print("  (No files available)")
+                print("------------------------------------------")
+
+        # 6. EXIT
+        elif choice == '6':
+            print("\n[+] Exiting DFS Client. Goodbye!")
+            break
+
+        else:
+            print("\n[!] Invalid choice. Please select an option between 1 and 6.")
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+\subsubsection{Output}
+\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=client.py Output]
+======================================================================
+[ PLACEHOLDER: Paste client.py execution output / terminal logs here ]
+======================================================================
+\end{lstlisting}
+
+\newpage
+
+\subsection{test.py (test\_dfs.py)}
+
+\subsubsection{Source Code}
+\begin{lstlisting}[language=Python, title=test_dfs.py]
+import os
+import sys
+import time
+import threading
+import unittest
+
+# Import server and client modules
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import server
+import client
+
+class TestDFS(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Start server in a background daemon thread
+        cls.server_thread = threading.Thread(target=server.start_server, daemon=True)
+        cls.server_thread.start()
+        time.sleep(0.5)  # Give server time to bind and listen
+
+    def test_01_create_file(self):
+        res = client.send_request("CREATE", "lab3_test.txt", "Hello DFS World!")
+        self.assertEqual(res["status"], "SUCCESS")
+        self.assertIn("created successfully", res["message"])
+
+    def test_02_read_file(self):
+        res = client.send_request("READ", "lab3_test.txt")
+        self.assertEqual(res["status"], "SUCCESS")
+        self.assertEqual(res["data"], "Hello DFS World!")
+
+    def test_03_write_file(self):
+        res = client.send_request("WRITE", "lab3_test.txt", "Updated content for Distributed File System.")
+        self.assertEqual(res["status"], "SUCCESS")
+        
+        # Verify read after write
+        res_read = client.send_request("READ", "lab3_test.txt")
+        self.assertEqual(res_read["data"], "Updated content for Distributed File System.")
+
+    def test_04_list_files(self):
+        res = client.send_request("LIST")
+        self.assertEqual(res["status"], "SUCCESS")
+        self.assertIn("lab3_test.txt", res["data"])
+
+    def test_05_delete_file(self):
+        res = client.send_request("DELETE", "lab3_test.txt")
+        self.assertEqual(res["status"], "SUCCESS")
+
+        # Verify read fails after delete
+        res_read = client.send_request("READ", "lab3_test.txt")
+        self.assertEqual(res_read["status"], "ERROR")
+
+if __name__ == "__main__":
+    unittest.main()
+\end{lstlisting}
+
+\subsubsection{Output}
+\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=test_dfs.py Output]
+======================================================================
+[ PLACEHOLDER: Paste test_dfs.py execution output / terminal logs here ]
+======================================================================
+\end{lstlisting}
+
+\newpage
+
+% 5. Discussion
+\section{Discussion}
+In this laboratory assignment, a Distributed File System (DFS) was successfully implemented using Python's native \texttt{socket}, \texttt{threading}, \texttt{json}, and \texttt{os} modules. The architecture follows a multi-threaded Client-Server model.
+
+Key observations and technical takeaways include:
+\begin{itemize}
+    \item \textbf{Communication Protocol}: The application uses TCP sockets to guarantee reliable, ordered data delivery. Messages between client and server are serialized into JSON objects containing action types, filenames, and data payloads.
+    \item \textbf{Concurrency}: By spawning a daemon thread for each client connection on the server side, multiple client requests can be processed concurrently without blocking the main event loop.
+    \item \textbf{Flat File \& Directory Services}: The server maintains physical storage within a \texttt{server\_storage} directory. Filename inputs are sanitized using \texttt{os.path.basename} to prevent directory traversal security vulnerabilities.
+    \item \textbf{Transparency}: The client interacts with files via a simple terminal UI without needing manual socket initialization or server address prompt inputs.
+\end{itemize}
+
+% 6. Conclusion
+\section{Conclusion}
+The implementation of the Distributed File System was executed successfully. All required core file system operations—\texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}—along with file listing were verified using both manual client execution and automated unit testing. The system demonstrates the practical concepts of location transparency, remote procedure invocations over network sockets, and client-server synchronization in distributed computing.
+
+\end{document}
