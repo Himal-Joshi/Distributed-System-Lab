@@ -14,7 +14,6 @@ if not os.path.exists(STORAGE_DIR):
 
 def handle_client(client_socket, address):
     print(f"[+] Client connected from {address[0]}:{address[1]}")
-    
     while True:
         try:
             # Receive request data from client
