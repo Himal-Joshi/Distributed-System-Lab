@@ -1,0 +1,16 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Java Compiled Files
+*.class
+
+# DFS Server Runtime Storage
+server_storage/
