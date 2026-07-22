@@ -1,80 +1,36 @@
-\documentclass[12pt, a4paper]{article}
-
-% Required Packages
-\usepackage[utf8]{utf8}
-\usepackage[margin=1in]{geometry}
-\usepackage{graphicx}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{titlesec}
-\usepackage{caption}
-
-% Code Listing Configuration
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
-
-\lstset{
-    language=Python,
-    backgroundcolor=\color{backcolour},
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,
-    breaklines=true,
-    captionpos=b,
-    keepspaces=true,
-    numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=4,
-    frame=single
-}
-
-% Title Formatting
-\title{\textbf{Implementation of Distributed File System (DFS)}\\
-\large Department of Computer Engineering}
-\author{\textbf{Student Name:} Himal Joshi \\ \textbf{Faculty:} Computer Engineering}
-\date{\today}
+\documentclass[main]{subfiles}
 
 \begin{document}
 
+% 1. Title
+\title{Implementation of DFS (Distributed File System)}
 \maketitle
-
-\hrule
-\vspace{0.5cm}
 
 % 2. Objective
 \section{Objective}
-The main objectives of this lab assignment are:
+The main objectives of this laboratory assignment are:
 \begin{enumerate}
-    \item To understand the core architecture and working principles of a Distributed File System (DFS).
-    \item To implement a client-server model for a distributed file system using Python socket programming and multi-threading.
-    \item To perform fundamental file system operations remotely: \texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}.
-    \item To manage concurrency and dynamic storage synchronization between client and server.
+    \item To implement a Distributed File System (DFS) using a client-server architecture in Python.
+    \item To perform fundamental file operations remotely, including \texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}.
+    \item To utilize standard Python networking (\texttt{socket}) and concurrency (\texttt{threading}) libraries.
+    \item To ensure transparent file access without requiring manual network connection prompts from the user.
 \end{enumerate}
 
 % 3. Theory
 \section{Theory}
 
-\subsection{Distributed File System (DFS)}
-A Distributed File System (DFS) is a file system with data stored on a server where files can be accessed and processed by clients over a network connection as if they were residing locally. A DFS provides location transparency, concurrency control, and centralized data management, allowing multiple clients to access shared files concurrently without conflicting with each other.
+\subsection{DFS (Distributed File System)}
+A Distributed File System (DFS) is a network-based file management system that allows users to access and manipulate files stored on a remote server as if they were residing on their local storage devices. A DFS provides location transparency, centralized data storage, concurrent multi-user access control, and data consistency across distributed clients over a network.
 
-\subsection{Client-Server Architecture}
-The client-server model is a distributed application structure that partitions tasks or workloads between providers of a resource or service (servers) and service requesters (clients):
+\subsection{Server, Client}
+The architecture relies on the classical Client-Server paradigm:
 \begin{itemize}
-    \item \textbf{Server}: Listens continuously on a designated host and port for incoming TCP socket connections. Upon receiving a client request, it processes the requested file operation against physical storage and returns a formatted response payload.
-    \item \textbf{Client}: Initiates communication by establishing a socket connection to the server, sends structured operation requests (e.g., in JSON format), and renders server responses to the user through an interactive terminal user interface.
+    \item \textbf{Server}: Operates continuously on a designated network interface and port. It receives structured file operation requests over TCP sockets, processes them against physical server storage (\texttt{server\_storage/}), and sends back JSON-serialized responses. Multi-threading is utilized to handle multiple concurrent client connections.
+    \item \textbf{Client}: Connects automatically to the server's default host and port address. It presents an interactive terminal interface for the user to select file operations, serializes requests into JSON payloads, sends them to the server, and renders the server's response.
 \end{itemize}
 
 \subsection{Block Diagram}
-The architecture of the implemented Distributed File System is shown in Figure~\ref{fig:block_diagram}.
+The structural block diagram of the implemented Distributed File System is shown in Figure~\ref{fig:block_diagram}.
 
 \begin{figure}[htbp]
     \centering
@@ -83,11 +39,11 @@ The architecture of the implemented Distributed File System is shown in Figure~\
     \label{fig:block_diagram}
 \end{figure}
 
-\subsection{Directory Service and Flat File Service}
-A distributed file system typically separates management responsibilities into two modular abstractions:
+\subsection{Directory Service, Flat File Service}
+In a formal DFS model, services are categorized into two primary abstractions:
 \begin{enumerate}
-    \item \textbf{Directory Service}: Responsible for mapping human-readable text filenames to unique file identifiers or storage paths. It handles operations such as searching directory contents, listing files, and maintaining file metadata.
-    \item \textbf{Flat File Service}: Operates directly on raw file contents. It handles operations such as reading file byte streams, writing/updating content to storage files, creating new raw file objects, and removing files from storage.
+    \item \textbf{Directory Service}: Manages file names, directory structures, path resolution, and metadata mapping. In this system, the directory service maps text filenames to localized paths in \texttt{server\_storage/} and provides directory listings.
+    \item \textbf{Flat File Service}: Handles raw byte-stream operations on file contents. It handles file creation, reading data blocks, writing/updating file contents, and deleting file entities from disk storage.
 \end{enumerate}
 
 % 4. Source Code and Output
@@ -218,13 +174,11 @@ if __name__ == "__main__":
 \end{lstlisting}
 
 \subsubsection{Output}
-\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=server.py Output]
+\begin{lstlisting}[title=server.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste server.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
-
-\newpage
 
 \subsection{client.py}
 
@@ -358,13 +312,11 @@ if __name__ == "__main__":
 \end{lstlisting}
 
 \subsubsection{Output}
-\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=client.py Output]
+\begin{lstlisting}[title=client.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste client.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
-
-\newpage
 
 \subsection{test.py (test\_dfs.py)}
 
@@ -425,28 +377,26 @@ if __name__ == "__main__":
 \end{lstlisting}
 
 \subsubsection{Output}
-\begin{lstlisting}[backgroundcolor=\color{black!5}, basicstyle=\ttfamily\small, title=test_dfs.py Output]
+\begin{lstlisting}[title=test_dfs.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste test_dfs.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
 
-\newpage
-
 % 5. Discussion
 \section{Discussion}
-In this laboratory assignment, a Distributed File System (DFS) was successfully implemented using Python's native \texttt{socket}, \texttt{threading}, \texttt{json}, and \texttt{os} modules. The architecture follows a multi-threaded Client-Server model.
+In this experiment, a functional Distributed File System (DFS) was built using Python's fundamental \texttt{socket}, \texttt{threading}, \texttt{json}, and \texttt{os} libraries. The client-server model was implemented to allow remote file manipulation over a TCP socket connection.
 
-Key observations and technical takeaways include:
+Key insights from the implementation:
 \begin{itemize}
-    \item \textbf{Communication Protocol}: The application uses TCP sockets to guarantee reliable, ordered data delivery. Messages between client and server are serialized into JSON objects containing action types, filenames, and data payloads.
-    \item \textbf{Concurrency}: By spawning a daemon thread for each client connection on the server side, multiple client requests can be processed concurrently without blocking the main event loop.
-    \item \textbf{Flat File \& Directory Services}: The server maintains physical storage within a \texttt{server\_storage} directory. Filename inputs are sanitized using \texttt{os.path.basename} to prevent directory traversal security vulnerabilities.
-    \item \textbf{Transparency}: The client interacts with files via a simple terminal UI without needing manual socket initialization or server address prompt inputs.
+    \item \textbf{TCP Communication Protocol}: The client serializes request parameters (action, filename, content) into JSON strings, which are transmitted reliably over TCP socket connections to the server.
+    \item \textbf{Server Concurrency}: Using Python's \texttt{threading.Thread}, the server handles incoming client connections concurrently without blocking other request queues.
+    \item \textbf{Flat File \& Directory Services}: Physical files are safely handled inside \texttt{server\_storage/}. Filename inputs are sanitized using \texttt{os.path.basename} to prevent directory traversal attacks.
+    \item \textbf{Transparency}: The client connects directly to the hardcoded server address without prompting the user for manual connection parameters.
 \end{itemize}
 
 % 6. Conclusion
 \section{Conclusion}
-The implementation of the Distributed File System was executed successfully. All required core file system operations—\texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}—along with file listing were verified using both manual client execution and automated unit testing. The system demonstrates the practical concepts of location transparency, remote procedure invocations over network sockets, and client-server synchronization in distributed computing.
+The implementation of the Distributed File System in Python was successfully completed and evaluated. All required file system operations (\texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}) along with file listing function were verified through manual interactions and automated unit tests. The lab demonstrated fundamental concepts of network sockets, concurrent server handling, and remote file management in distributed systems.
 
 \end{document}
