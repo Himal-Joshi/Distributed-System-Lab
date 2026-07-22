@@ -24,7 +24,6 @@ The main objectives of this laboratory assignment are:
 \subsection*{DFS (Distributed File System)}
 A Distributed File System (DFS) is a network-based file management system that allows users to access and manipulate files stored on a remote server as if they were residing on their local storage devices. A DFS provides location transparency, centralized data storage, concurrent multi-user access control, and data consistency across distributed clients over a network.
 
-\subsection*{Server, Client}
 The architecture relies on the classical Client-Server paradigm:
 \begin{itemize}
     \item \textbf{Server}: Operates continuously on a designated network interface and port. It receives structured file operation requests over TCP sockets, processes them against physical server storage (\texttt{server\_storage/}), and sends back JSON-serialized responses. Multi-threading is utilized to handle multiple concurrent client connections.
@@ -48,13 +47,14 @@ In a formal DFS model, services are categorized into two primary abstractions:
     \item \textbf{Flat File Service}: Handles raw byte-stream operations on file contents. It handles file creation, reading data blocks, writing/updating file contents, and deleting file entities from disk storage.
 \end{enumerate}
 
-% Source Code and Output
+% Source Code and Output on a New Page
+\newpage
 \section*{Source Code and Output}
 
 \subsection*{server.py}
 
 \subsubsection*{Source Code}
-\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
+\begin{minted}[linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import os
 import json
@@ -176,7 +176,7 @@ if __name__ == "__main__":
 \end{minted}
 
 \subsubsection*{Output}
-\begin{minted}[frame=single,breaklines,fontsize=\footnotesize]{text}
+\begin{minted}[breaklines,fontsize=\footnotesize]{text}
 ==========================================
  Distributed File System (DFS) Server
  Running on 127.0.0.1:5000
@@ -188,7 +188,7 @@ Waiting for client connections...
 \subsection*{client.py}
 
 \subsubsection*{Source Code}
-\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
+\begin{minted}[linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import json
 
@@ -317,7 +317,7 @@ if __name__ == "__main__":
 \end{minted}
 
 \subsubsection*{Output}
-\begin{minted}[frame=single,breaklines,fontsize=\footnotesize]{text}
+\begin{minted}[breaklines,fontsize=\footnotesize]{text}
 ==========================================
     DISTRIBUTED FILE SYSTEM (DFS) CLIENT   
 ==========================================
@@ -427,7 +427,7 @@ Enter option (1-6): 6
 \subsection*{test.py (test\_dfs.py)}
 
 \subsubsection*{Source Code}
-\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
+\begin{minted}[linenos,breaklines,fontsize=\footnotesize]{python}
 import os
 import sys
 import time
@@ -483,7 +483,7 @@ if __name__ == "__main__":
 \end{minted}
 
 \subsubsection*{Output}
-\begin{minted}[frame=single,breaklines,fontsize=\footnotesize]{text}
+\begin{minted}[breaklines,fontsize=\footnotesize]{text}
 ==========================================
  Distributed File System (DFS) Server
  Running on 127.0.0.1:5000
