@@ -2,12 +2,18 @@
 
 \begin{document}
 
-% 1. Title
-\title{Implementation of DFS (Distributed File System)}
-\maketitle
+% Title at top of the same page
+{\centering
+\Large \textbf{Implementation of DFS (Distributed File System)}\par
+\vspace{0.2cm}
+\large Department of Computer Engineering\par
+\vspace{0.4cm}
+}
+\hrule
+\vspace{0.4cm}
 
-% 2. Objective
-\section{Objective}
+% Objective
+\section*{Objective}
 The main objectives of this laboratory assignment are:
 \begin{enumerate}
     \item To implement a Distributed File System (DFS) using a client-server architecture in Python.
@@ -16,20 +22,20 @@ The main objectives of this laboratory assignment are:
     \item To ensure transparent file access without requiring manual network connection prompts from the user.
 \end{enumerate}
 
-% 3. Theory
-\section{Theory}
+% Theory
+\section*{Theory}
 
-\subsection{DFS (Distributed File System)}
+\subsection*{DFS (Distributed File System)}
 A Distributed File System (DFS) is a network-based file management system that allows users to access and manipulate files stored on a remote server as if they were residing on their local storage devices. A DFS provides location transparency, centralized data storage, concurrent multi-user access control, and data consistency across distributed clients over a network.
 
-\subsection{Server, Client}
+\subsection*{Server, Client}
 The architecture relies on the classical Client-Server paradigm:
 \begin{itemize}
     \item \textbf{Server}: Operates continuously on a designated network interface and port. It receives structured file operation requests over TCP sockets, processes them against physical server storage (\texttt{server\_storage/}), and sends back JSON-serialized responses. Multi-threading is utilized to handle multiple concurrent client connections.
     \item \textbf{Client}: Connects automatically to the server's default host and port address. It presents an interactive terminal interface for the user to select file operations, serializes requests into JSON payloads, sends them to the server, and renders the server's response.
 \end{itemize}
 
-\subsection{Block Diagram}
+\subsection*{Block Diagram}
 The structural block diagram of the implemented Distributed File System is shown in Figure~\ref{fig:block_diagram}.
 
 \begin{figure}[htbp]
@@ -39,20 +45,20 @@ The structural block diagram of the implemented Distributed File System is shown
     \label{fig:block_diagram}
 \end{figure}
 
-\subsection{Directory Service, Flat File Service}
+\subsection*{Directory Service, Flat File Service}
 In a formal DFS model, services are categorized into two primary abstractions:
 \begin{enumerate}
     \item \textbf{Directory Service}: Manages file names, directory structures, path resolution, and metadata mapping. In this system, the directory service maps text filenames to localized paths in \texttt{server\_storage/} and provides directory listings.
     \item \textbf{Flat File Service}: Handles raw byte-stream operations on file contents. It handles file creation, reading data blocks, writing/updating file contents, and deleting file entities from disk storage.
 \end{enumerate}
 
-% 4. Source Code and Output
-\section{Source Code and Output}
+% Source Code and Output
+\section*{Source Code and Output}
 
-\subsection{server.py}
+\subsection*{server.py}
 
-\subsubsection{Source Code}
-\begin{lstlisting}[language=Python, title=server.py]
+\subsubsection*{Source Code}
+\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import os
 import json
@@ -171,19 +177,19 @@ def start_server():
 
 if __name__ == "__main__":
     start_server()
-\end{lstlisting}
+\end{minted}
 
-\subsubsection{Output}
-\begin{lstlisting}[title=server.py Output]
+\subsubsection*{Output}
+\begin{lstlisting}[frame=single, title=server.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste server.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
 
-\subsection{client.py}
+\subsection*{client.py}
 
-\subsubsection{Source Code}
-\begin{lstlisting}[language=Python, title=client.py]
+\subsubsection*{Source Code}
+\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import socket
 import json
 
@@ -309,19 +315,19 @@ def main():
 
 if __name__ == "__main__":
     main()
-\end{lstlisting}
+\end{minted}
 
-\subsubsection{Output}
-\begin{lstlisting}[title=client.py Output]
+\subsubsection*{Output}
+\begin{lstlisting}[frame=single, title=client.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste client.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
 
-\subsection{test.py (test\_dfs.py)}
+\subsection*{test.py (test\_dfs.py)}
 
-\subsubsection{Source Code}
-\begin{lstlisting}[language=Python, title=test_dfs.py]
+\subsubsection*{Source Code}
+\begin{minted}[frame=lines,linenos,breaklines,fontsize=\footnotesize]{python}
 import os
 import sys
 import time
@@ -374,17 +380,17 @@ class TestDFS(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-\end{lstlisting}
+\end{minted}
 
-\subsubsection{Output}
-\begin{lstlisting}[title=test_dfs.py Output]
+\subsubsection*{Output}
+\begin{lstlisting}[frame=single, title=test_dfs.py Output]
 ======================================================================
 [ PLACEHOLDER: Paste test_dfs.py execution output / terminal logs here ]
 ======================================================================
 \end{lstlisting}
 
-% 5. Discussion
-\section{Discussion}
+% Discussion
+\section*{Discussion}
 In this experiment, a functional Distributed File System (DFS) was built using Python's fundamental \texttt{socket}, \texttt{threading}, \texttt{json}, and \texttt{os} libraries. The client-server model was implemented to allow remote file manipulation over a TCP socket connection.
 
 Key insights from the implementation:
@@ -395,8 +401,8 @@ Key insights from the implementation:
     \item \textbf{Transparency}: The client connects directly to the hardcoded server address without prompting the user for manual connection parameters.
 \end{itemize}
 
-% 6. Conclusion
-\section{Conclusion}
+% Conclusion
+\section*{Conclusion}
 The implementation of the Distributed File System in Python was successfully completed and evaluated. All required file system operations (\texttt{CREATE}, \texttt{READ}, \texttt{WRITE}, and \texttt{DELETE}) along with file listing function were verified through manual interactions and automated unit tests. The lab demonstrated fundamental concepts of network sockets, concurrent server handling, and remote file management in distributed systems.
 
 \end{document}
