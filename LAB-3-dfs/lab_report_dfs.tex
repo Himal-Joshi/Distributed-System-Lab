@@ -5,12 +5,8 @@
 % Title at top of the same page
 {\centering
 \Large \textbf{Implementation of DFS (Distributed File System)}\par
-\vspace{0.2cm}
-\large Department of Computer Engineering\par
 \vspace{0.4cm}
 }
-\hrule
-\vspace{0.4cm}
 
 % Objective
 \section*{Objective}
@@ -40,7 +36,7 @@ The structural block diagram of the implemented Distributed File System is shown
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/Implementation of DFS - Block Diagram.png}
+    \includegraphics[width=\textwidth]{images/Implementation of DFS - Block Diagram.png}
     \caption{Implementation of DFS - Block Diagram}
     \label{fig:block_diagram}
 \end{figure}
@@ -181,9 +177,12 @@ if __name__ == "__main__":
 
 \subsubsection*{Output}
 \begin{lstlisting}[frame=single, title=server.py Output]
-======================================================================
-[ PLACEHOLDER: Paste server.py execution output / terminal logs here ]
-======================================================================
+==========================================
+ Distributed File System (DFS) Server
+ Running on 127.0.0.1:5000
+ Storage Path: e:\Lab Reports\Distributed-System-Lab\LAB-3-dfs\server_storage
+==========================================
+Waiting for client connections...
 \end{lstlisting}
 
 \subsection*{client.py}
@@ -319,9 +318,110 @@ if __name__ == "__main__":
 
 \subsubsection*{Output}
 \begin{lstlisting}[frame=single, title=client.py Output]
-======================================================================
-[ PLACEHOLDER: Paste client.py execution output / terminal logs here ]
-======================================================================
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT   
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 1
+Enter filename to create (e.g., test.txt): test.txt
+Enter initial file content (optional): echo "Hello!"
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' created successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 2
+Enter filename to read: test.txt
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' read successfully.
+------------------------------------------
+FILE CONTENT:
+echo "Hello!"
+------------------------------------------
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 3
+Enter filename to write/update: test.txt
+Enter content to write: ok
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' written successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 5
+
+[Server Status] : SUCCESS
+[Server Message]: Files listed successfully.
+------------------------------------------
+FILES ON DFS SERVER:
+  1. himal.txt
+  2. test.txt
+------------------------------------------
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 4
+Enter filename to delete: test.txt
+
+[Server Status] : SUCCESS
+[Server Message]: File 'test.txt' deleted successfully.
+
+==========================================
+    DISTRIBUTED FILE SYSTEM (DFS) CLIENT
+==========================================
+1. Create File
+2. Read File
+3. Write / Update File
+4. Delete File
+5. List Files
+6. Exit
+==========================================
+Enter option (1-6): 6
+
+[+] Exiting DFS Client. Goodbye!
+(venv) PS E:\Lab Reports\Distributed-System-Lab> 
 \end{lstlisting}
 
 \subsection*{test.py (test\_dfs.py)}
@@ -384,9 +484,18 @@ if __name__ == "__main__":
 
 \subsubsection*{Output}
 \begin{lstlisting}[frame=single, title=test_dfs.py Output]
-======================================================================
-[ PLACEHOLDER: Paste test_dfs.py execution output / terminal logs here ]
-======================================================================
+==========================================
+ Distributed File System (DFS) Server
+ Running on 127.0.0.1:5000
+ Storage Path: e:\Lab Reports\Distributed-System-Lab\LAB-3-dfs\server_storage
+==========================================
+Waiting for client connections...
+
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.524s
+
+OK
 \end{lstlisting}
 
 % Discussion
